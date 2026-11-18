@@ -1,0 +1,158 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 1932
+  },
+  {
+    "path": "assets/artwork/a_large_photographic_collage_grid_of_4_columns.png",
+    "bytes": 3431750
+  },
+  {
+    "path": "assets/artwork/a_vibrant_watercolor_gouache_style_collage_in_a_4.png",
+    "bytes": 4113752
+  },
+  {
+    "path": "assets/artwork/cropped_user_photos_preview.jpg",
+    "bytes": 149454
+  },
+  {
+    "path": "assets/artwork/cropped_user_photos_preview2.jpg",
+    "bytes": 228094
+  },
+  {
+    "path": "assets/artwork/pune_photo_contact_sheet.jpg",
+    "bytes": 200544
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/aga_khan.webp",
+    "bytes": 122352
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/chaturshringi.webp",
+    "bytes": 127946
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/dagdusheth.webp",
+    "bytes": 130178
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/food.webp",
+    "bytes": 103494
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/kelkar.webp",
+    "bytes": 117478
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/khadakwasla.webp",
+    "bytes": 115758
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/lal_mahal.webp",
+    "bytes": 117070
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/market.webp",
+    "bytes": 134982
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/parvati.webp",
+    "bytes": 110628
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/pataleshwar.webp",
+    "bytes": 120886
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/preview.jpg",
+    "bytes": 446338
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/pune_mural.webp",
+    "bytes": 221678
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/shaniwar.webp",
+    "bytes": 118834
+  },
+  {
+    "path": "assets/images/pune_dashboard_assets/sinhagad.webp",
+    "bytes": 127624
+  },
+  {
+    "path": "assets/images/pune_photo_assets/agakhan.webp",
+    "bytes": 52214
+  },
+  {
+    "path": "assets/images/pune_photo_assets/chaturshringi.webp",
+    "bytes": 76212
+  },
+  {
+    "path": "assets/images/pune_photo_assets/dagdusheth.webp",
+    "bytes": 68806
+  },
+  {
+    "path": "assets/images/pune_photo_assets/kelkar.webp",
+    "bytes": 54252
+  },
+  {
+    "path": "assets/images/pune_photo_assets/khadakwasla.webp",
+    "bytes": 38132
+  },
+  {
+    "path": "assets/images/pune_photo_assets/lalmahal.webp",
+    "bytes": 78372
+  },
+  {
+    "path": "assets/images/pune_photo_assets/market.webp",
+    "bytes": 69066
+  },
+  {
+    "path": "assets/images/pune_photo_assets/panshet.webp",
+    "bytes": 32908
+  },
+  {
+    "path": "assets/images/pune_photo_assets/parvati.webp",
+    "bytes": 44782
+  },
+  {
+    "path": "assets/images/pune_photo_assets/pataleshwar.webp",
+    "bytes": 64036
+  },
+  {
+    "path": "assets/images/pune_photo_assets/shaniwar.webp",
+    "bytes": 62146
+  },
+  {
+    "path": "assets/images/pune_photo_assets/sinhagad.webp",
+    "bytes": 49662
+  },
+  {
+    "path": "index.html",
+    "bytes": 21940
+  },
+  {
+    "path": "references/Pune_dashboard_preview_day1.png",
+    "bytes": 659101
+  },
+  {
+    "path": "references/Pune_dashboard_preview_desktop.png",
+    "bytes": 802100
+  },
+  {
+    "path": "references/Pune_dashboard_preview_gallery.png",
+    "bytes": 1214301
+  },
+  {
+    "path": "references/Pune_dashboard_preview_mobile.png",
+    "bytes": 5420807
+  },
+  {
+    "path": "src/dashboard.js",
+    "bytes": 3123820
+  },
+  {
+    "path": "src/styles.css",
+    "bytes": 18720
+  }
+]
