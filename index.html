@@ -1,172 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#171816" />
-<title>Pune for Two — Interactive Travel Journal</title>
-<link rel="stylesheet" href="src/styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171816">
+  <meta name="description" content="A personal travel journal with worldwide destination discovery, editable budgets, routes and locally saved checklists.">
+  <title>Roam Together — Your all-in-one travel planner</title>
+  <link rel="stylesheet" href="src/styles.css">
+  <script defer src="src/planner-core.js"></script>
+  <script defer src="src/destinations.js"></script>
+  <script defer src="src/app.js"></script>
 </head>
 <body>
-<div class="wrap">
-<header class="hero" id="top">
- <div class="hero-grid">
-  <div>
-   <div class="kicker">A six-day city escape · Maharashtra, India</div>
-   <h1>Pune for Two</h1>
-   <p class="subtitle">Old lanes, hilltop sunsets &amp; thalis. Slow mornings over misal and chai, Peshwa stories by day, and the city turning gold from a temple hilltop — with room to wander at your own pace.</p>
-   <div class="travel-ribbon"><span><b>🚂</b> Slow arrivals</span><span><b>🛺</b> City rides</span><span><b>🏰</b> Heritage trails</span><span><b>🌺</b> Old bazaars</span><span><b>☕</b> Chai breaks</span><span><b>🌄</b> Hilltop sunsets</span></div>
-   <div class="hero-meta"><span class="chip">📍 Pune old city → Koregaon Park → Sinhagad → Khadakwasla</span><span class="chip">🗓️ Flexible dates · 6 days</span><span class="chip">📷 Bundled photo-style destination visuals</span><span class="chip good">✓ Travel booked both ways</span><span class="chip good">✓ Pune flat sorted</span></div>
-   <div class="hero-actions"><a class="btn" href="#activity">Explore the 6-day plan ↓</a><button class="btn ghost" onclick="window.print()">⇩ Print / Save as PDF</button><button class="btn ghost" onclick="downloadBackup()">⤓ Export my checklist</button></div>
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="storageNotice" class="notice error" role="alert" hidden></div>
+<main id="main" class="wrap">
+  <section id="onboarding" aria-labelledby="welcomeTitle">
+    <header class="welcome hero">
+      <div class="kicker">A little planning. A world of possibility.</div>
+      <h1 id="welcomeTitle" tabindex="-1">Where will your<br>next story begin?</h1>
+      <p class="subtitle">One person or your favourite people. A quick escape or the long way round. Build a travel journal that feels like you.</p>
+      <div class="travel-ribbon"><span>🧭 Your destination</span><span>💰 Your budget</span><span>🛺 Your pace</span><span>🎒 Everything in one place</span></div>
+    </header>
+    <form id="tripForm" class="card pad onboarding-form">
+      <div class="section-head"><div><div class="kicker">Your trip, your way</div><h2 class="section-title">Let’s set the scene</h2></div><span class="tag">No account · No API key</span></div>
+      <fieldset>
+        <legend>01 / The journey</legend>
+        <div class="grid two">
+          <label class="field"><span class="field-label">Travelling from</span><input id="origin" required maxlength="160" placeholder="City, town or home base" autocomplete="address-level2"></label>
+          <div class="field"><label class="field-label" for="destinationQuery">Travelling to</label><div class="search-row"><input id="destinationQuery" required maxlength="100" placeholder="Search a city, e.g. Paris" aria-describedby="cityHelp"><button id="findCity" type="button" class="btn ghost">Find city</button></div><span id="cityHelp" class="field-help">Search, then choose the city and country below. Pune also works offline.</span></div>
+        </div>
+        <div id="cityResults" class="city-results" role="group" aria-label="Destination search results"></div>
+        <p id="chosenCity" class="small-copy" aria-live="polite">No destination selected yet.</p>
+        <div class="grid three">
+          <label class="field"><span class="field-label">Number of days</span><input id="tripDays" type="number" min="1" max="60" step="1" value="6" required></label>
+          <label class="field"><span class="field-label">Departure date (optional)</span><input id="startDate" type="date"></label>
+          <label class="field"><span class="field-label">Travel style</span><select id="tripStyle"><option value="solo">Solo adventure</option><option value="couple" selected>Couple escape</option><option value="family">Family time</option><option value="friends">Friends getaway</option><option value="group">Group expedition</option></select></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>02 / Who’s coming?</legend>
+        <p class="small-copy">Include yourself. Count each person once: older adults separately from other adults. These counts set costs and a gentler pace for children / older travellers, not gender-based recommendations.</p>
+        <div class="grid four">
+          <label class="field"><span class="field-label">Adult males</span><input id="maleCount" type="number" min="0" max="50" step="1" value="1" required></label>
+          <label class="field"><span class="field-label">Adult females</span><input id="femaleCount" type="number" min="0" max="50" step="1" value="1" required></label>
+          <label class="field"><span class="field-label">Children</span><input id="childCount" type="number" min="0" max="50" step="1" value="0" required></label>
+          <label class="field"><span class="field-label">Older people</span><input id="olderCount" type="number" min="0" max="50" step="1" value="0" required></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>03 / Make room for the memories</legend>
+        <div class="grid three">
+          <label class="field"><span class="field-label">Budget currency</span><select id="currency"><option value="INR">INR · Indian rupee</option><option value="USD">USD · US dollar</option><option value="EUR">EUR · Euro</option><option value="GBP">GBP · British pound</option><option value="JPY">JPY · Japanese yen</option><option value="AUD">AUD · Australian dollar</option><option value="CAD">CAD · Canadian dollar</option><option value="SGD">SGD · Singapore dollar</option><option value="AED">AED · UAE dirham</option><option value="THB">THB · Thai baht</option></select></label>
+          <label class="field"><span class="field-label">Budget applies to</span><select id="budgetMode"><option value="group">The entire group</option><option value="person">Each person</option></select></label>
+          <label class="field"><span class="field-label">Budget amount</span><input id="budgetAmount" type="number" min="1" max="1000000000" step="1" value="30000" required></label>
+        </div>
+        <p class="small-copy">All-inclusive: round-trip travel, stay, food, local transport, activities and reserve. Review every category below, in whole currency units for the entire group. Prices are planning allowances, not live quotes; currency selection does not convert an existing budget.</p>
+        <div id="onboardingBudgetInputs" class="grid two"></div>
+        <p id="onboardingBudgetSummary" class="small-copy" aria-live="polite"></p>
+        <p class="field-help">Changing the total, budget mode or traveller counts resets the suggested split. Category amounts must add up to the group total; you can rebalance them here or later.</p>
+      </fieldset>
+      <div class="notice"><b>A transparent kind of travel planner.</b> City searches go to Open-Meteo / GeoNames; destination coordinates go to Wikipedia for nearby places and images. Your origin, group details, budget and checklists stay in this browser. External links share their search / route details only when opened. No booking account or email access.</div>
+      <p id="onboardingError" class="form-error" role="alert" hidden></p>
+      <p id="discoveryStatus" class="small-copy" role="status"></p>
+      <div class="form-actions"><button id="createTrip" class="btn" type="submit">Build my travel journal 🧭</button><button id="cancelEdit" class="btn ghost" type="button" hidden>Back to my trip</button></div>
+    </form>
+  </section>
+
+  <div id="dashboard" hidden>
+    <header class="hero" id="top">
+      <div class="hero-grid">
+        <div><div class="kicker" id="heroKicker"></div><h1 id="heroTitle" tabindex="-1"></h1><p class="subtitle" id="heroSubtitle"></p><div class="travel-ribbon"><span>🧭 New discoveries</span><span>🏛️ Local stories</span><span>☕ Slow moments</span><span>🎒 Room to wander</span></div><div class="hero-meta" id="heroMeta"></div><div class="hero-actions"><a class="btn" href="#activity">Explore your plan ↓</a><button class="btn ghost" id="editTrip" type="button">Edit / new trip</button><button class="btn ghost" id="printTrip" type="button">Print / PDF</button><button class="btn ghost" id="exportTrip" type="button">Export trip</button></div></div>
+        <div class="companion"><button id="mascot" class="mascot-button" aria-label="Get a destination travel tip" type="button"><span aria-hidden="true">🛺</span></button><div class="mascot-note" id="mascotName"></div><p id="tipText" class="small-copy" aria-live="polite"></p></div>
+      </div>
+    </header>
+    <section class="pune-filmstrip" aria-label="Destination highlights"><div id="filmLabel" class="film-label"></div><div id="filmTiles" class="film-tiles"></div></section>
+    <nav class="sticky-nav" aria-label="Trip sections"><div class="nav"><a href="#overview">Overview</a><a href="#travel">Travel &amp; stay</a><a href="#bookings">Bookings</a><a href="#activity">Your planner</a><a href="#gallery">Photo stops</a><a href="#budget">Budget</a><a href="#transport">Local transport</a><a href="#safety">Safety</a><a href="#packing">Packing</a><a href="#playlist">Playlist</a><a href="#sources">Resources</a></div></nav>
+
+    <section class="section" id="overview"><div class="section-head"><div><h2 class="section-title">Your trip at a glance</h2><p class="section-sub">A flexible starting point, shaped around your people and your budget.</p></div><span class="tag" id="groupTag"></span></div><div class="grid four" id="overviewCards"></div></section>
+
+    <section class="section" id="travel">
+      <div class="section-head"><div><h2 class="section-title">Travel &amp; accommodation</h2><p class="section-sub">Nothing is assumed booked. Save your actual base and terminals to personalise day routes.</p></div></div>
+      <form class="card pad" id="routeForm"><div class="grid two" id="travelSummary"></div><div class="field-grid">
+        <label class="field"><span class="field-label">Stay address / neighbourhood</span><input id="baseAddress" maxlength="240" placeholder="An area or landmark is enough"></label>
+        <label class="field"><span class="field-label">Arrival station / airport</span><input id="arrivalPoint" maxlength="240"></label>
+        <label class="field"><span class="field-label">Return station / airport</span><input id="departurePoint" maxlength="240"></label>
+      </div><div class="form-actions"><label class="field"><span class="field-label">Google Maps travel mode</span><select id="routeMode"><option value="transit">Public transit</option><option value="walking">Walking</option><option value="driving">Driving</option><option value="bicycling">Cycling</option></select></label><button class="btn small" type="submit">Save route details</button></div><p class="field-help">Addresses are saved locally. Opening Maps sends the base, terminals and stops to Google. Routes are starting suggestions, not live timetables.</p></form>
+    </section>
+
+    <section class="section" id="bookings"><div class="section-head"><div><h2 class="section-title">Bookings &amp; to-dos</h2><p class="section-sub">Links follow the current itinerary. Mark confirmed only after you book; links are not tickets or availability checks.</p></div></div><div class="card pad" id="bookingList"></div></section>
+
+    <section class="section" id="activity">
+      <div class="section-head"><div><h2 class="section-title">Your day-by-day travel story</h2><p class="section-sub">Neighbouring stops together, with time for food, rest and the unexpected.</p></div><div class="actions"><button id="routeInfo" class="btn small ghost" type="button" aria-expanded="false" aria-controls="routeNote">ⓘ Route planning note</button><button id="toggleDays" class="btn small ghost" type="button">Collapse all days</button></div></div>
+      <div class="notice" id="routeNote" hidden>Times are suggested slots, not verified opening hours. Stops use a nearest-neighbour order, not a traffic-optimised route. Google Maps recalculates travel time; change the mode if needed. Exterior-only stops mean a public-area walk, not admission: confirm access and skip if restricted. Check accessibility, weather, local fares and the last service. Add your base above; an unfilled base defaults to the city centre. Long stays may have unplanned days rather than repeated or invented attractions.</div>
+      <div class="card pad travel-progress"><div class="section-head"><b>Little by little, a whole adventure</b><span id="tripProgressText" class="small-copy" aria-live="polite"></span></div><div id="tripProgress" class="journey-track" role="progressbar" aria-label="Trip completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="tripProgressFill" class="journey-fill"></div><span id="journeyIcon" aria-hidden="true">🛺</span></div></div>
+      <div id="daysContainer"></div>
+      <details class="card pad shortlist"><summary>Choose the places you want to explore</summary><p class="small-copy">Select your shortlist, then rebuild. Budget, distance and available days decide what can be scheduled. Rebuilding resets day completion.</p><form id="shortlistForm"><div id="shortlistChoices" class="packing-list"></div><button class="btn small" type="submit">Save places &amp; rebuild</button></form></details>
+      <details class="card pad"><summary>Add a place to your destination shortlist</summary><p class="small-copy">Use the place’s real coordinates from Maps. Saving regenerates the itinerary and resets day completion. Existing packing and bookings are retained.</p><form id="placeForm"><div class="grid two"><label class="field"><span class="field-label">Place name</span><input id="placeName" required maxlength="140"></label><label class="field"><span class="field-label">Overview / access notes</span><input id="placeSummary" required maxlength="500"></label><label class="field"><span class="field-label">Latitude (-90 to 90)</span><input id="placeLat" type="number" min="-90" max="90" step="any" required></label><label class="field"><span class="field-label">Longitude (-180 to 180)</span><input id="placeLon" type="number" min="-180" max="180" step="any" required></label></div><p class="small-copy">Custom places use a conservative activity allowance; confirm actual admission. No image or Wikipedia article is assumed.</p><button class="btn small" type="submit">Add place &amp; rebuild</button><p class="form-error" id="placeError" role="alert" hidden></p></form></details>
+    </section>
+
+    <section class="section" id="gallery"><div class="section-head"><div><h2 class="section-title">Postcard stops &amp; place previews</h2><p class="section-sub">Your scheduled places. Maps for the way there; Wikipedia for the story. Missing images stay clearly labelled, never replaced with an unrelated city.</p></div></div><div class="photo-strip" id="galleryGrid"></div></section>
+
+    <section class="section" id="budget">
+      <div class="section-head"><div><h2 class="section-title">A budget with breathing room</h2><p class="section-sub" id="budgetSubtitle"></p></div><span class="tag">All-inclusive · Editable</span></div>
+      <div class="two-col"><form class="card pad" id="budgetForm"><div class="budget-total"><div><div class="kicker">Group budget</div><strong id="budgetTotal"></strong></div><div id="budgetPerPerson" class="budget-note"></div></div><div id="budgetInputs"></div><div class="allocation-bar" id="allocationBar" aria-hidden="true"></div><p class="small-copy" id="budgetDraftNote" aria-live="polite"></p><p class="small-copy">Draft edits do not change your trip. Saving rebuilds routes, activities, bookings and previews, and resets day completion. Packing and unchanged booking confirmations stay saved.</p><button class="btn" type="submit">Save budget &amp; rebuild plan</button><p id="budgetError" class="form-error" role="alert" hidden></p></form><div class="card pad"><div class="kicker">Your spending compass</div><div id="budgetInsights"></div><div class="notice"><b>Estimates, not guarantees.</b> Activity allowances are broad heuristics, not venue prices, age discounts or currency conversions. If admission does not fit, we suggest an exterior / public-area visit only. Food, stay and travel allocations must be checked against real quotes. No automated booking or exchange-rate feed.</div></div></div>
+    </section>
+
+    <section class="section" id="transport"><div class="section-head"><div><h2 class="section-title">Move like a local</h2><p class="section-sub">Metro maps where known, plus buses and other useful transport.</p></div></div><div id="transportDetails" class="card pad"></div></section>
+    <section class="section" id="safety"><div class="section-head"><div><h2 class="section-title">Good adventures start with care</h2><p class="section-sub">Destination and group-aware reminders — not a live safety advisory.</p></div></div><div id="safetyNotes" class="safety"></div><div id="emergencyDetails" class="card pad emergency-card"></div></section>
+
+    <section class="section" id="packing"><div class="section-head"><div><h2 class="section-title">Pack light. Feel ready.</h2><p class="section-sub">Mark as picked, drop what you don’t need, add your own. Every change stays with this trip.</p></div><span id="packingCount" class="tag"></span></div><div class="card pad"><div class="progress-wrap" id="packingMeter" role="progressbar" aria-label="Packing completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="packingProgress" class="progress"></div></div><div id="packingList" class="packing-list"></div><form id="packingForm" class="search-row add-packing"><label class="field grow"><span class="field-label">Add a packing item</span><input id="newPackingItem" required maxlength="160" placeholder="The one thing you always forget…"></label><button class="btn small" type="submit">Add item</button></form></div></section>
+    <section class="section" id="playlist"><div class="section-head"><div><h2 class="section-title" id="playlistTitle"></h2><p class="section-sub">A few hand-picked travel tracks and destination-inspired searches. Opens your music service; no playlist is created in your account.</p></div></div><div id="playlistTracks" class="playlist"></div></section>
+    <section class="section" id="sources"><div class="section-head"><div><h2 class="section-title">Useful checks &amp; resources</h2><p class="section-sub">Verify the details that matter before you leave.</p></div></div><div class="card pad sources" id="resourceLinks"></div></section>
+    <footer class="foot">Take the scenic route. Keep the good stories.<div class="small-copy">Roam Together · Saved in this browser, not synced · Export a backup before changing devices.</div></footer>
   </div>
-  <div>
-   <svg class="mascot" viewBox="0 0 300 245" role="img" aria-label="Illustrated Pune auto-rickshaw travel companion" onclick="mascotTip()">
-    <defs><linearGradient id="autoG" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffdc75"/><stop offset="1" stop-color="#d08b23"/></linearGradient><linearGradient id="greenG"><stop stop-color="#3c845c"/><stop offset="1" stop-color="#20513c"/></linearGradient></defs>
-    <path d="M26 188 Q55 173 65 146 L82 85 Q92 54 130 48 L213 58 Q238 65 250 100 L271 167 Q276 190 254 196 L45 203 Q20 202 26 188Z" fill="url(#autoG)" stroke="#7d5518" stroke-width="7"/>
-    <path d="M82 87 Q93 61 130 59 L207 67 Q226 72 237 100 L246 128 L71 128Z" fill="#253b3a" stroke="#f2d99e" stroke-width="5"/>
-    <path d="M95 91 Q104 72 132 71 L158 74 L152 119 L80 119Z" fill="#9ec2c1" opacity=".78"/><path d="M169 75 L205 79 Q220 83 227 103 L232 119 L163 119Z" fill="#a9d0cf" opacity=".78"/>
-    <path d="M45 146 L253 146 L267 178 Q270 192 251 195 L42 197 Q29 195 35 180Z" fill="url(#greenG)" stroke="#17422f" stroke-width="4"/>
-    <path d="M64 149 L234 149 L239 178 L57 180Z" fill="#e4b44c"/><path d="M100 152 L202 152 L202 174 L100 174Z" fill="#f3e2b9"/><text x="151" y="168" text-anchor="middle" font-size="12" font-family="Arial" font-weight="bold" fill="#31533c">PUNE MITRA</text>
-    <circle cx="83" cy="198" r="24" fill="#171816" stroke="#a8a39a" stroke-width="7"/><circle cx="83" cy="198" r="9" fill="#a7a39a"/><circle cx="226" cy="198" r="24" fill="#171816" stroke="#a8a39a" stroke-width="7"/><circle cx="226" cy="198" r="9" fill="#a7a39a"/>
-    <path d="M45 142 L30 127 L15 131 L35 155Z" fill="#d8aa42" stroke="#7d5518" stroke-width="4"/><path d="M245 137 L269 127 L281 135 L256 153Z" fill="#d8aa42" stroke="#7d5518" stroke-width="4"/>
-    <path d="M135 47 Q142 30 158 26" stroke="#e8b946" stroke-width="5" fill="none"/><path d="M158 26 L171 13 L176 30Z" fill="#c74c43"/>
-    <path d="M112 14 Q143 -4 176 14 Q188 22 181 39 Q148 31 119 39 Q103 31 112 14Z" fill="#f5ead2" stroke="#b58a43" stroke-width="3"/><circle cx="137" cy="20" r="4" fill="#26251e"/><circle cx="160" cy="20" r="4" fill="#26251e"/><path d="M140 29 Q150 36 161 28" fill="none" stroke="#a15a39" stroke-width="3" stroke-linecap="round"/>
-    <path d="M21 62 Q5 47 14 29" stroke="#7eb17c" stroke-width="4" fill="none"/><path d="M8 35 Q-1 19 14 16 Q24 28 8 35Z" fill="#6c9c63"/><path d="M277 76 Q295 61 286 43" stroke="#7eb17c" stroke-width="4" fill="none"/><path d="M289 49 Q302 31 287 25 Q275 40 289 49Z" fill="#6c9c63"/>
-   </svg>
-   <div class="mascot-note">Tap Pune Mitra for a tiny travel tip</div>
-  </div>
- </div>
-</header>
-<section class="pune-filmstrip" aria-label="Pune travel highlights"><div class="film-label">✦ POSTCARDS FROM PUNE ✦</div><div class="film-tiles">
-<a href="https://www.google.com/maps/search/?api=1&amp;query=Shaniwar+Wada+Pune" target="_blank" rel="noopener"><img data-photo="shaniwar" alt="Shaniwar Wada" loading="eager" referrerpolicy="no-referrer" onerror="fallbackImage(this,'','Shaniwar Wada')"><span>Old-city legends</span></a>
-<a href="https://www.google.com/maps/search/?api=1&amp;query=Dagdusheth+Ganpati+Pune" target="_blank" rel="noopener"><img data-photo="dagdusheth" alt="Dagdusheth Ganpati" loading="eager" referrerpolicy="no-referrer" onerror="fallbackImage(this,'','Dagdusheth Ganpati')"><span>Golden darshan</span></a>
-<a href="https://www.google.com/maps/search/?api=1&amp;query=Aga+Khan+Palace+Pune" target="_blank" rel="noopener"><img data-photo="agakhan" alt="Aga Khan Palace" loading="eager" referrerpolicy="no-referrer" onerror="fallbackImage(this,'','Aga Khan Palace')"><span>Heritage gardens</span></a>
-<a href="https://www.google.com/maps/search/?api=1&amp;query=Sinhagad+Fort+Pune" target="_blank" rel="noopener"><img data-photo="sinhagad" alt="Sinhagad Fort" loading="eager" referrerpolicy="no-referrer" onerror="fallbackImage(this,'','Sinhagad Fort')"><span>Sahyadri escapes</span></a>
-</div></section>
-<nav class="sticky-nav"><div class="nav"><a href="#overview">Overview</a><a href="#travel">Travel &amp; stay</a><a href="#bookings">Bookings</a><a href="#activity">6-day plan</a><a href="#gallery">Photo stops</a><a href="#budget">Budget</a><a href="#safety">Safety</a><a href="#packing">Packing</a><a href="#playlist">Playlist</a></div></nav>
-
-<section class="section" id="overview">
- <div class="section-head"><div><h2 class="section-title">Your trip at a glance</h2><p class="section-sub">A relaxed pace, with one big fort day and one flexible lakeside day.</p></div><span class="tag">Designed for two</span></div>
- <div class="grid four">
-  <div class="card overview-card"><div class="label">Duration</div><div class="big">6 days</div><div class="desc">Flexible dates · start/end at your Pune flat</div></div>
-  <div class="card overview-card"><div class="label">Travel status</div><div class="big">Booked ✓</div><div class="desc">Outbound Day 1 · return Day 6</div></div>
-  <div class="card overview-card"><div class="label">Stay</div><div class="big">Sorted ✓</div><div class="desc">Your own flat · no hotel spend included</div></div>
-  <div class="card overview-card"><div class="label">On-ground budget</div><div class="big">₹7.6k–14k</div><div class="desc">Estimated total for both of you</div></div>
- </div>
-</section>
-
-<section class="section" id="travel">
- <div class="section-head"><div><h2 class="section-title">Travel &amp; accommodation</h2><p class="section-sub">Your booked travel and home base are already in place. Add the exact pickup points to personalise route links.</p></div></div>
- <div class="grid two">
-  <div class="card pad">
-   <div class="kicker">Travel to Pune</div>
-   <div class="travel-row"><div class="travel-label">Your city → Pune</div><span class="muted">Day 1</span><span class="pill-status">✓ Booked</span></div>
-   <div class="travel-row"><div class="travel-label">Pune → your city</div><span class="muted">Day 6</span><span class="pill-status">✓ Booked</span></div>
-   <div class="field-grid" style="grid-template-columns:1fr 1fr">
-    <label class="field"><span class="field-label">Arrival city / station (optional)</span><input id="arrivalPoint" placeholder="e.g. Pune Junction" /></label>
-    <label class="field"><span class="field-label">Return station / airport</span><input id="departurePoint" placeholder="e.g. Pune Airport" /></label>
-   </div>
-   <div style="margin-top:12px"><a class="btn small ghost" href="https://www.google.com/maps/search/?api=1&query=Pune+Junction" target="_blank" rel="noopener">Open Pune Junction map ↗</a> <a class="btn small ghost" href="https://www.google.com/maps/search/?api=1&query=Pune+International+Airport" target="_blank" rel="noopener">Open Pune Airport map ↗</a></div>
-  </div>
-  <div class="card pad">
-   <div class="kicker">Accommodation</div>
-   <div class="travel-row"><div class="travel-label">Your own flat in Pune</div><span class="muted">Days 1–6</span><span class="pill-status">✓ Sorted</span></div>
-   <p class="muted" style="font-size:13px;margin:9px 0 12px">Every day starts and ends here. The exact address stays in this browser until you choose to open a Google Maps route.</p>
-   <label class="field"><span class="field-label">Flat address / neighbourhood (used for Maps links)</span><input id="flatAddress" placeholder="Enter your Pune flat address or area" /></label>
-   <div class="field-help">Tip: an area or landmark is enough; a full address gives better door-to-door directions.</div>
-   <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" onclick="saveSettings()">Save route details</button><a class="btn small ghost" href="https://www.google.com/maps/search/?api=1&query=hotels+in+Pune" target="_blank" rel="noopener">Hotel backup search ↗</a></div>
-  </div>
- </div>
-</section>
-
-<section class="section" id="bookings">
- <div class="section-head"><div><h2 class="section-title">Bookings &amp; to-dos</h2><p class="section-sub">The big travel and stay pieces are done. These are the remaining checks for the trip.</p></div></div>
- <div class="card pad">
-  <div class="booking"><div><b>Sinhagad Fort visit</b><div class="muted" style="font-size:12px">Day 4 · early morning</div><p>Plan a shared cab or a bus-plus-auto option. Confirm road access, vehicle restrictions and weather before leaving.</p></div><div class="actions"><span class="tag">Transport to arrange</span><a class="btn small ghost" href="https://www.google.com/maps/search/?api=1&query=Sinhagad+Fort+Pune" target="_blank" rel="noopener">Map ↗</a></div></div>
-  <div class="booking"><div><b>Aga Khan Palace</b><div class="muted" style="font-size:12px">Day 3 · morning</div><p>Keep a modest entry-fee buffer and check the current ASI ticket / timings for your visit date.</p></div><div class="actions"><span class="tag">Ticket check</span><a class="btn small ghost" href="https://www.google.com/maps/search/?api=1&query=Aga+Khan+Palace+Pune" target="_blank" rel="noopener">Map ↗</a></div></div>
-  <div class="booking"><div><b>Osho International Meditation Resort</b><div class="muted" style="font-size:12px">Day 3 · optional</div><p>Paid and subject to current visitor rules. Skip it to keep the day economical; Osho Teerth Park / Koregaon Park is the lighter alternative, subject to access.</p></div><div class="actions"><span class="tag">Optional · verify entry</span><a class="btn small ghost" href="https://www.google.com/maps/search/?api=1&query=Osho+International+Meditation+Resort+Pune" target="_blank" rel="noopener">Map ↗</a></div></div>
-  <div class="booking"><div><b>Malaka Spice dinner</b><div class="muted" style="font-size:12px">Day 3 · around 19:05 · Koregaon Park</div><p>Reserve a day ahead, especially for a weekend garden table. Official Koregaon Park contact: +91 98230 64050.</p></div><div class="actions"><a class="btn small" href="tel:+919823064050">Call to reserve</a><a class="btn small ghost" href="https://malakaspice.com/contact.php" target="_blank" rel="noopener">Official contact ↗</a></div></div>
- </div>
-</section>
-
-<section class="section" id="activity">
- <div class="section-head"><div><h2 class="section-title">The six-day activity plan</h2><p class="section-sub">Each route opens in Google Maps. Put your flat address above for accurate door-to-door directions.</p></div><button class="btn small ghost" onclick="toggleAllDays()" id="toggleDays">Collapse all days</button></div>
- <div id="daysContainer"></div>
- <div class="card pad" style="margin-top:16px">
-  <b style="color:var(--gold2)">Route planning note</b>
-  <p class="muted" style="font-size:13px;margin:5px 0 0">The times below are itinerary targets, not live traffic estimates. Google Maps will recalculate based on your actual start point, traffic and stop order. Switch the travel mode to walking or transit for local stretches when that works better. Day 4 has a hill road / steep approach; Day 5's Panshet extension is optional and adds driving time.</p>
- </div>
-</section>
-
-<section class="section" id="gallery">
- <div class="section-head"><div><h2 class="section-title">Postcard stops &amp; place previews</h2><p class="section-sub">Tap a picture for Google Maps or follow the Wikipedia link below it to read about the place. Four photos are cropped from your supplied mockup; the other destination visuals are AI-generated, photo-style illustrations.</p></div></div>
- <div class="photo-strip" id="galleryGrid"></div>
-</section>
-
-<section class="section" id="budget">
- <div class="section-head"><div><h2 class="section-title">Budget for two</h2><p class="section-sub">Your supplied estimate is ₹7,600–₹14,000 for six days on the ground, excluding stay and intercity travel.</p></div><span class="tag">Editable planner</span></div>
- <div class="two-col">
-  <div class="card pad">
-   <div class="budget-total"><div><div class="kicker">Working budget</div><strong id="budgetTotal">₹7,600</strong></div><div class="budget-note">Edit the categories to plan your spend</div></div>
-   <div class="budget-track"><div class="budget-fill" id="budgetFill"></div></div>
-   <div class="budget-line"><label for="foodBudget">Food · breakfasts, thalis, dinners</label><input id="foodBudget" type="number" min="0" step="100" value="3600" /></div>
-   <div class="budget-line"><label for="transportBudget">Local transport · buses, autos, shared rides</label><input id="transportBudget" type="number" min="0" step="100" value="2000" /></div>
-   <div class="budget-line"><label for="entryBudget">Entry, snacks &amp; contingency</label><input id="entryBudget" type="number" min="0" step="100" value="2000" /></div>
-   <div class="budget-note">Original planning ranges: food ₹3,600–₹6,000 · transport ₹2,000–₹4,000 · entry / snacks / contingency ₹2,000–₹4,000.</div>
-  </div>
-  <div class="card pad">
-   <div class="kicker">Spend-smart notes</div>
-   <ul style="padding-left:20px;margin:12px 0;color:#d6d0c4;font-size:14px">
-    <li>Use PMPML / Metro where the route is convenient; autos are useful for short hops.</li>
-    <li>For Sinhagad, compare a shared cab with bus-plus-auto before deciding.</li>
-    <li>Keep Khadakwasla as the default Day 5 outing; add Panshet only if the transport budget and weather allow.</li>
-    <li>Prioritise free temples and viewpoints; treat Osho Resort as optional.</li>
-    <li>Keep a small cash buffer for stalls, parking and local transport.</li>
-   </ul>
-   <a class="btn small ghost" href="https://www.punemetrorail.org/route-map" target="_blank" rel="noopener">Pune Metro route map ↗</a>
-  </div>
- </div>
-</section>
-
-<section class="section" id="safety">
- <div class="section-head"><div><h2 class="section-title">Safety notes</h2><p class="section-sub">A practical checklist for city walks, temple visits and the hill / lakeside days.</p></div></div>
- <div class="safety">
-  <div class="safety-item"><b>🏞️ Hills, fort &amp; water</b><p class="muted" style="font-size:13px;margin:5px 0 0">Wear shoes with grip; carry water and sun protection. Avoid slippery edges, restricted areas and entering the reservoir. Check weather and local access before Sinhagad, Khadakwasla or Panshet.</p></div>
-  <div class="safety-item"><b>🚕 Getting around</b><p class="muted" style="font-size:13px;margin:5px 0 0">Use known ride providers or agreed fares, confirm the vehicle before boarding, and share the trip / live location with someone you trust when travelling out of the city.</p></div>
-  <div class="safety-item"><b>📱 Essentials</b><p class="muted" style="font-size:13px;margin:5px 0 0">Keep phones charged, carry photo ID, a power bank and some cash. Save your flat address offline and keep a little buffer before the return train or flight.</p></div>
-  <div class="safety-item"><b>🌙 Evenings</b><p class="muted" style="font-size:13px;margin:5px 0 0">Stay on well-lit, active streets; use a trusted ride for the return to your flat. Check the last metro / bus timing rather than assuming service is still running.</p></div>
- </div>
- <div class="card pad" style="margin-top:13px"><b style="color:var(--gold2)">Useful emergency contacts in India</b><div class="helplines"><a href="tel:112">112 · Emergency</a><a href="tel:108">108 · Ambulance</a><a href="tel:1091">1091 · Women helpline</a><a href="tel:1363">1363 · Tourist helpline</a></div><p class="small-copy" style="margin-bottom:0">Numbers checked against Government of India / Pune Police information. For immediate danger, call 112.</p></div>
-</section>
-
-<section class="section" id="packing">
- <div class="section-head"><div><h2 class="section-title">Packing list</h2><p class="section-sub">Tick items as you pack. Progress is saved in this browser.</p></div><span class="tag" id="packingCount">0 / 6 ready</span></div>
- <div class="card pad"><div class="progress-wrap"><div class="progress" id="packingProgress"></div></div><div class="packing-list" id="packingList"></div></div>
-</section>
-
-<section class="section" id="playlist">
- <div class="section-head"><div><h2 class="section-title">Pune for Two playlist</h2><p class="section-sub">Slow Pune days, just the two of you.</p></div></div>
- <div class="playlist">
-  <div class="track"><b>Kasoor · Prateek Kuhad</b><span>Chai going cold at Roopali, nowhere to be.</span><a href="https://open.spotify.com/search/Kasoor%20Prateek%20Kuhad" target="_blank" rel="noopener">Spotify ↗</a> · <a href="https://music.youtube.com/search?q=Kasoor+Prateek+Kuhad" target="_blank" rel="noopener">YouTube Music ↗</a></div>
-  <div class="track"><b>Zingaat · Ajay–Atul</b><span>FC Road at dusk, scooters, bhel and college noise.</span><a href="https://open.spotify.com/search/Zingaat%20Ajay%20Atul" target="_blank" rel="noopener">Spotify ↗</a> · <a href="https://music.youtube.com/search?q=Zingaat+Ajay+Atul" target="_blank" rel="noopener">YouTube Music ↗</a></div>
-  <div class="track"><b>Malhari · Vishal Dadlani</b><span>Under the iron spikes of the Delhi Gate.</span><a href="https://open.spotify.com/search/Malhari%20Vishal%20Dadlani" target="_blank" rel="noopener">Spotify ↗</a> · <a href="https://music.youtube.com/search?q=Malhari+Vishal+Dadlani" target="_blank" rel="noopener">YouTube Music ↗</a></div>
- </div>
-</section>
-
-<section class="section" id="sources">
- <div class="section-head"><div><h2 class="section-title">Useful checks &amp; sources</h2><p class="section-sub">A few details have been checked against official pages; confirm again near your travel dates.</p></div></div>
- <div class="card pad sources">
-  <p><b>Visitor details:</b> <a href="https://www.incredibleindia.gov.in/en/maharashtra/pune/shaniwar-wada" target="_blank" rel="noopener">Shaniwar Wada — Incredible India</a> (listed 9:30 a.m.–5 p.m.; closed Sunday); <a href="https://rajakelkarmuseum.org/plan-a-visit-2" target="_blank" rel="noopener">Raja Dinkar Kelkar Museum — official visit page</a> (10 a.m.–5:30 p.m.; ticket prices should be rechecked on the booking page); <a href="https://www.kayanibakerypune.com/contact" target="_blank" rel="noopener">Kayani Bakery — official contact &amp; hours</a> (Mon–Sat 7:30 a.m.–1 p.m. and 3:30–7 p.m.; closed Sunday).</p>
-  <p><b>Getting out of the city:</b> <a href="https://pune.gov.in/en/tourist-place/sinhagad/" target="_blank" rel="noopener">Pune District — Sinhagad Fort</a>; <a href="https://pune.gov.in/en/tourist-place/khadakwasala-dam/" target="_blank" rel="noopener">Pune District — Khadakwasla Dam</a>; <a href="https://maharashtratourism.gov.in/nature/panshet-dam/" target="_blank" rel="noopener">Maharashtra Tourism — Panshet Dam</a>.</p>
-  <p><b>Local movement &amp; safety:</b> <a href="https://www.punemetrorail.org/route-map" target="_blank" rel="noopener">Pune Metro route map</a>; <a href="https://www.punepolice.gov.in/" target="_blank" rel="noopener">Pune City Police</a>; <a href="https://www.incredibleindia.gov.in/en/emergency" target="_blank" rel="noopener">Incredible India emergency contacts</a>.</p>
-  <p><b>Image note:</b> The Shaniwar Wada, Lal Mahal, Dagdusheth Ganpati and Tulshibaug images are cropped from the Pune mockup screenshots you supplied. The remaining destination visuals are AI-generated, photo-style illustrations bundled with the dashboard so the cards display without external image hosting; they are visual inspiration, not documentary photographs. The Pune watercolor background is original illustrative artwork.</p>
-  <p><b>Last checked:</b> 19 November 2026. Opening hours, ticket prices, access restrictions, restaurant availability and public transport timetables may change; verify before departure.</p>
- </div>
-</section>
-<footer class="foot">Enjoy Pune together — history in the morning, good food at lunch, and time to breathe in between. <div class="small-copy" style="margin-top:7px">Made as an interactive trip companion · Your address and checklist stay in this browser unless you choose to open an external link.</div></footer>
-</div>
-<div class="floating-tip" onclick="mascotTip()"><b>🛺 Pune Mitra says…</b><span id="tipText">Save the flat address above before opening day routes.</span></div>
-<div class="toast" id="toast">Saved</div>
-<script src="src/dashboard.js"></script>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<noscript><p class="notice">Enable JavaScript to create and save a trip. This static planner does not require an account.</p></noscript>
 </body>
 </html>

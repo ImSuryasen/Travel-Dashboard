@@ -1,7 +1,7 @@
 [
   {
     "path": "README.md",
-    "bytes": 1932
+    "bytes": 7663
   },
   {
     "path": "assets/artwork/a_large_photographic_collage_grid_of_4_columns.png",
@@ -129,7 +129,7 @@
   },
   {
     "path": "index.html",
-    "bytes": 21940
+    "bytes": 18315
   },
   {
     "path": "references/Pune_dashboard_preview_day1.png",
@@ -148,11 +148,31 @@
     "bytes": 5420807
   },
   {
+    "path": "src/app.js",
+    "bytes": 45443
+  },
+  {
     "path": "src/dashboard.js",
     "bytes": 3123820
   },
   {
+    "path": "src/destinations.js",
+    "bytes": 12584
+  },
+  {
+    "path": "src/planner-core.js",
+    "bytes": 11104
+  },
+  {
     "path": "src/styles.css",
-    "bytes": 18720
+    "bytes": 25805
+  },
+  {
+    "path": "tests/destinations.test.js",
+    "bytes": 3240
+  },
+  {
+    "path": "tests/planner-core.test.js",
+    "bytes": 7317
   }
 ]
